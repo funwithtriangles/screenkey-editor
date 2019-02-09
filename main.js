@@ -2,17 +2,24 @@
 const pxW = 36
 const pxH = 24
 const numPx = pxW * pxH
+const numBytes = numPx / 8
 const aspectRatio = pxH / pxW
 const canvasW = 500
 const canvasH = canvasW * aspectRatio
 const pxSize = canvasW / pxW
 const outputEl = document.querySelector('#output')
 
+// Convert binary to hex
+const binToHex = bin => `0x${parseInt(bin, 2).toString(16)}`
+
 // Canvas and context to draw on
 const canvasEl = document.querySelector('#canvas')
 const ctx = canvasEl.getContext('2d')
 canvasEl.width = canvasW
 canvasEl.height = canvasH
+
+// Empty pixel array
+const pixels = []
 
 // Get the position of the canvas once in order to calc mouse pos
 // This would need to be updated if canvas moves/changes size
@@ -38,6 +45,29 @@ const getMousePos = (evt) => {
     return i + j
 }
 
+// Output binary array to hex
+const output = (binArray) => {
+    // Empty array to store hex vals
+    const hexArr = []
+
+    // Loop through number of bytes needed to create
+    for (let i = 0; i < numBytes; i++) {
+        // Create empty binary string to build up
+        let bin = ''
+        // Loop through number of bits per byte
+        // Get the position in array and add to binary string
+        for (let j = 0; j < 8; j++) {
+            const arrPos = (i * 8) + j
+            bin += pixels[arrPos]
+        }
+        // Convert bin to hex and add to hex array
+        hexArr.push(binToHex(bin))
+    }
+
+    // Output hex array
+    outputEl.value = hexArr
+}
+
 // Set pixel as 0 or 1 depending on mouseState
 const setPixel = (e) => {
     if (mouseState === 'left') {
@@ -47,7 +77,7 @@ const setPixel = (e) => {
     }
     
     if (mouseState !== 'none') {
-        outputEl.value = pixels
+        output(pixels)
     }
 }
 
@@ -78,8 +108,6 @@ canvasEl.addEventListener('mouseup', (e) => {
     mouseState = 'none'
 })
 
-// Empty pixel array
-const pixels = []
 
 // Populate array with 0s for empty pixels
 for (let i = 0; i < numPx; i++) {
