@@ -8,9 +8,15 @@ const canvasW = 500
 const canvasH = canvasW * aspectRatio
 const pxSize = canvasW / pxW
 const outputEl = document.querySelector('#output')
+const inputEl = document.querySelector('#input')
 
 // Convert binary to hex
 const binToHex = bin => `0x${parseInt(bin, 2).toString(16)}`
+// Convert hex to binary
+const hexToBin = hex => (parseInt(hex, 16).toString(2)).padStart(8, '0')
+
+// Strip spaces from string
+const stripString = t => t.replace(/[\n\r]+/g, '').replace(/\s{2,10}/g, ' ').trim();
 
 // Canvas and context to draw on
 const canvasEl = document.querySelector('#canvas')
@@ -19,7 +25,7 @@ canvasEl.width = canvasW
 canvasEl.height = canvasH
 
 // Empty pixel array
-const pixels = []
+let pixels = []
 
 // Get the position of the canvas once in order to calc mouse pos
 // This would need to be updated if canvas moves/changes size
@@ -68,13 +74,41 @@ const output = (binArray) => {
     outputEl.value = hexArr
 }
 
+// Set pixels based on input hex
+const input = (hexList) => {
+    // Strip spaces from hex inputted and update the textarea with the reformated version
+    hexList = stripString(hexList)
+    inputEl.value = hexList
+
+    // Will populate this array with new 1s and 0s
+    let newPixels = []
+
+    // Convert string of hexes to array of hexes
+    const hexArr = hexList.split(',')
+
+    // Alert user if wrong number of bytes
+    if (hexArr.length !== numBytes) {
+        window.alert('Wrong number of bytes in hex array!')
+    }
+
+    // Build up new pixels array
+    for (let i = 0; i < numBytes; i++) {
+        const bin = hexToBin(hexArr[i])
+        const arr = bin.split('')
+        newPixels = newPixels.concat(arr)
+    }
+
+    pixels = newPixels
+    output(pixels)
+}
+
 // Set pixel as 0 or 1 depending on mouseState
 const setPixel = (e) => {
     if (mouseState === 'left') {
-        pixels[getMousePos(e)] = 1
+        pixels[getMousePos(e)] = '1'
     } else if (mouseState === 'right') {
-        pixels[getMousePos(e)] = 0
-    }
+        pixels[getMousePos(e)] = '0'
+1    }
     
     if (mouseState !== 'none') {
         output(pixels)
@@ -108,6 +142,11 @@ canvasEl.addEventListener('mouseup', (e) => {
     mouseState = 'none'
 })
 
+// Update pixel values if input textarea changes
+inputEl.addEventListener('change', () => {
+    input(inputEl.value)
+})
+
 
 // Populate array with 0s for empty pixels
 for (let i = 0; i < numPx; i++) {
@@ -125,7 +164,7 @@ const animate = () => {
     // Loop through pixels array
     for (let i = 0; i < numPx; i++) {
         // Only draw if array value is 1
-        if (pixels[i] === 1) {
+        if (pixels[i] === '1') {
             // Get left and top pos of pixel based on array index
             const left = canvasW - ((i * pxSize) % canvasW) - pxSize
             const top = Math.floor(i / pxW) * pxSize
