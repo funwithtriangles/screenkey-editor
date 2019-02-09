@@ -24,8 +24,8 @@ const ctx = canvasEl.getContext('2d')
 canvasEl.width = canvasW
 canvasEl.height = canvasH
 
-// Empty pixel array
-let pixels = []
+// Create array for all pixels, filled with 0s
+let pixels = new Array(numPx).fill(0)
 
 // Get the position of the canvas once in order to calc mouse pos
 // This would need to be updated if canvas moves/changes size
@@ -151,12 +151,6 @@ canvasEl.addEventListener('mouseup', (e) => {
 inputEl.addEventListener('change', () => {
     input(inputEl.value)
 })
-
-
-// Populate array with 0s for empty pixels
-for (let i = 0; i < numPx; i++) {
-   pixels.push(0)
-}
 
 const animate = () => {
     // Draw green bg
