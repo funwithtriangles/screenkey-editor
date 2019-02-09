@@ -2,13 +2,29 @@
     <head>
         <title>Screenkey Editor</title>
         <style>
+
+            body {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                font-family: sans-serif;
+            }
             canvas {
                 border: 1px solid black;
             }
 
             textarea {
-                width: 500px;
+                width: 100%;
                 height: 200px;
+            }
+
+            .row {
+                display: flex;
+                width: 100%;
+            }
+
+            .col {
+                flex: 1;
             }
         </style>
     </head>
@@ -16,8 +32,17 @@
         <h1>Screenkey Editor</h1>
         <p><strong>Left Click:</strong> Draw , <strong>Right Click:</strong> Erase</p>
         <canvas id="canvas"></canvas>
-        <h2>Output</h2>
-        <textarea id="output"></textarea>
+        <div class="row">
+            <div class="col">
+                <h2>Output</h2>
+                <textarea id="output"></textarea>
+            </div>
+            <div class="col">
+                <h2>Input</h2>
+                <textarea id="input"></textarea>
+            </div>
+        </div>
+        
     </body>
     <script src="main.js"></script>
 </html>
