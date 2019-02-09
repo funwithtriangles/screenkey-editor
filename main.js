@@ -62,13 +62,15 @@ const output = (binArray) => {
         let bin = ''
         // Loop through number of bits per byte
         // Get the position in array and add to binary string
-        for (let j = 0; j < 8; j++) {
+        for (let j = 7; j > -1; j--) {
             const arrPos = (i * 8) + j
             bin += pixels[arrPos]
         }
+
         // Convert bin to hex and add to hex array
         hexArr.push(binToHex(bin))
     }
+
 
     // Output hex array
     outputEl.value = hexArr
@@ -94,10 +96,11 @@ const input = (hexList) => {
     // Build up new pixels array
     for (let i = 0; i < numBytes; i++) {
         const bin = hexToBin(hexArr[i])
-        const arr = bin.split('')
+        const arr = bin.split('').reverse()
         newPixels = newPixels.concat(arr)
     }
 
+    // Update and output pixels with new ones
     pixels = newPixels
     output(pixels)
 }
