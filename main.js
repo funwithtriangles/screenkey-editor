@@ -28,11 +28,24 @@ const getMousePos = (evt) => {
     const x = evt.clientX - canvRect.left
     const y = evt.clientY - canvRect.top
 
-    const i = Math.floor(x / pxSize)
+    const i = pxW - Math.ceil(x / pxSize)
     const j = Math.floor(y / pxSize) * pxW
 
     return i + j
 }
+
+const setPixel = (e) => {
+    if (mouseState === 'left') {
+        pixels[getMousePos(e)] = 1
+    } else if (mouseState === 'right') {
+        pixels[getMousePos(e)] = 0
+    }
+    
+    if (mouseState !== 'none') {
+        outputEl.value = pixels
+    }
+}
+
 
 canvasEl.addEventListener('contextmenu', e => e.preventDefault())
 
@@ -43,6 +56,8 @@ canvasEl.addEventListener('mousedown', (e) => {
     } else if (b === 2) {
         mouseState = 'right'
     }
+
+    setPixel(e)
 })
 
 canvasEl.addEventListener('mouseup', (e) => {
@@ -50,18 +65,8 @@ canvasEl.addEventListener('mouseup', (e) => {
 })
 
 
-/****** Logic ******/
-window.addEventListener('mousemove', (e) => {
-    if (mouseState === 'left') {
-        pixels[getMousePos(e)] = 1
-    } else if (mouseState === 'right') {
-        pixels[getMousePos(e)] = 0
-    }
-    
-    if (mouseState !== 'none') {
-        outputEl.value = pixels
-    }
- })
+
+window.addEventListener('mousemove', setPixel)
 
 const pixels = []
 
@@ -77,7 +82,7 @@ const animate = () => {
     ctx.fillRect(0, 0, canvasW, canvasH)
 
     for (let i = 0; i < numPx; i++) {
-        const left = (i * pxSize) % canvasW
+        const left = canvasW - ((i * pxSize) % canvasW) - pxSize
         const top = Math.floor(i / pxW) * pxSize
         ctx.fillStyle = pixels[i] === 1 ? colors.black : colors.green
         ctx.fillRect(left, top, pxSize, pxSize)
