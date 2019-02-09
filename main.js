@@ -62,6 +62,7 @@ const output = (binArray) => {
         let bin = ''
         // Loop through number of bits per byte
         // Get the position in array and add to binary string
+        // Must work backwards because the visual output is in reverse order per byte
         for (let j = 7; j > -1; j--) {
             const arrPos = (i * 8) + j
             bin += pixels[arrPos]
@@ -96,6 +97,7 @@ const input = (hexList) => {
     // Build up new pixels array
     for (let i = 0; i < numBytes; i++) {
         const bin = hexToBin(hexArr[i])
+        // Must reverse the digits for each byte to output correctly
         const arr = bin.split('').reverse()
         newPixels = newPixels.concat(arr)
     }
